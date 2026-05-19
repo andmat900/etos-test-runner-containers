@@ -26,7 +26,7 @@ else
 fi
 
 log "Installing ETR."
-uv pip install $PIP_ARGS "$ETR_INSTALL"
+uv pip install --system $PIP_ARGS "$ETR_INSTALL"
 log "ETR installed."
 
 log "Executing ETR."
