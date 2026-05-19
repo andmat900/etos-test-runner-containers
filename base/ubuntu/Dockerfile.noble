@@ -5,8 +5,8 @@ ENV ETR_PYTHON_VERSION=3.13
 
 USER root
 
-ENV PYENV_ROOT=/home/etos/.pyenv
-ENV PATH="/home/etos/.pyenv/shims:/home/etos/.pyenv/bin:${PATH}"
+ENV VIRTUAL_ENV=/home/etos/.venv
+ENV PATH="/home/etos/.venv/bin:${PATH}"
 ENV TEST_ARTIFACT_PATH=/home/etos/artifacts
 ENV GLOBAL_ARTIFACT_PATH=/home/etos/global
 ENV TEST_LOCAL_PATH=/home/etos/local
@@ -15,23 +15,21 @@ ENV TEST_LOCAL_PATH=/home/etos/local
 RUN apt-get update -y && \
     apt-get install -y build-essential libssl-dev zlib1g-dev libbz2-dev \
     libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
-    xz-utils tk-dev libffi-dev liblzma-dev python3-openssl git python3 python3-dev python3-pip \
+    xz-utils tk-dev libffi-dev liblzma-dev git \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/* && \
     groupadd -g 3705 etos && \
     useradd -u 3705 -g 3705 -ms /bin/bash etos
 
+COPY --from=ghcr.io/astral-sh/uv:0.11.15 /uv /uvx /bin/
+
 USER etos
 WORKDIR /home/etos
 
 # hadolint ignore=DL3013
-RUN echo "eval \"\$(pyenv init -)\"" >> /home/etos/.bashrc && \
-    git clone https://github.com/pyenv/pyenv.git /home/etos/.pyenv && \
-    pyenv install $ETR_PYTHON_VERSION && \
-    pyenv global $ETR_PYTHON_VERSION && \
-	pip install --no-cache-dir -U pip && \
-	pip install --no-cache-dir uv && \
-	uv pip install --system --no-cache etos_test_runner
+RUN uv python install $ETR_PYTHON_VERSION && \
+    uv venv --python $ETR_PYTHON_VERSION && \
+    uv pip install --no-cache etos_test_runner
 
 COPY executor.sh /home/etos/executor.sh
 ENTRYPOINT ["/home/etos/executor.sh"]
