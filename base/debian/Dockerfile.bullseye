@@ -28,8 +28,7 @@ WORKDIR /home/etos
 
 # hadolint ignore=DL3013
 RUN uv python install $ETR_PYTHON_VERSION && \
-    uv venv --python $ETR_PYTHON_VERSION && \
-    uv pip install --no-cache etos_test_runner
+    uv venv --python $ETR_PYTHON_VERSION
 
 COPY executor.sh /home/etos/executor.sh
 ENTRYPOINT ["/home/etos/executor.sh"]
