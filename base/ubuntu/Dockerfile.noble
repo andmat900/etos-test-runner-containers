@@ -7,6 +7,7 @@ USER root
 
 ENV VIRTUAL_ENV=/home/etos/.venv
 ENV PATH="/home/etos/.venv/bin:${PATH}"
+ENV TEST_FRAMEWORK_VENV=/home/etos/.test-framework
 ENV TEST_ARTIFACT_PATH=/home/etos/artifacts
 ENV GLOBAL_ARTIFACT_PATH=/home/etos/global
 ENV TEST_LOCAL_PATH=/home/etos/local
@@ -28,7 +29,8 @@ WORKDIR /home/etos
 
 # hadolint ignore=DL3013
 RUN uv python install $ETR_PYTHON_VERSION && \
-    uv venv --python $ETR_PYTHON_VERSION
+    uv venv --python $ETR_PYTHON_VERSION && \
+    uv venv --python $ETR_PYTHON_VERSION $TEST_FRAMEWORK_VENV
 
 COPY executor.sh /home/etos/executor.sh
 ENTRYPOINT ["/home/etos/executor.sh"]
