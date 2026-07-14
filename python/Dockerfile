@@ -1,7 +1,8 @@
 ARG DEBIAN_RELEASE=bookworm
 FROM ghcr.io/eiffel-community/etos-base-test-runner:$DEBIAN_RELEASE
 
+COPY --from=ghcr.io/astral-sh/uv:0.11.15 /uv /uvx /bin/
+
 ARG PYTHON_VERSION=3.9.18
-# Don't install if python version is already installed.
-# hadolint ignore=DL4006
-RUN if ! pyenv versions --bare | grep $PYTHON_VERSION ; then pyenv install $PYTHON_VERSION ; fi
+# Install additional Python version if not already present.
+RUN uv python install $PYTHON_VERSION

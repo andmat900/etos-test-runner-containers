@@ -8,13 +8,7 @@ log() {
     echo "[$(date --iso-8601=seconds)] - $*"
 }
 
-log "Sourcing pyenv."
-eval "$(pyenv init -)"
-
 PIP_ARGS=${PIP_ARG:-""}
-
-log "Setting pyenv shell to version '$ETR_PYTHON_VERSION'."
-pyenv shell "$ETR_PYTHON_VERSION"
 
 DEV=${DEV:-false}
 if [ "$DEV" = "true" ] ; then
@@ -26,7 +20,7 @@ else
 fi
 
 log "Installing ETR."
-pip install $PIP_ARGS "$ETR_INSTALL"
+uv pip install $PIP_ARGS "$ETR_INSTALL"
 log "ETR installed."
 
 log "Executing ETR."
